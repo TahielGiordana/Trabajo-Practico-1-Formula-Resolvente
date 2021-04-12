@@ -1,24 +1,22 @@
 #include <stdio.h>
 
-extern int formulaResolvente(int, int, int);
+extern int formulaResolvente(float, float, float);
 
 int main(){
-    int a = 1;
-    int b = 5;
-    int c = 3;
+    float a;
+    float b;
+    float c;
 
-    int n;
+    int tieneSolucion;
 
-    n = formulaResolvente(15,20,30);
-    printf("El numero es: %i\n",n);
-/*
-    if(formulaResolvente(a,b,c) == 1){
+    tieneSolucion = formulaResolvente(15,20,20.5);
+
+    if(tieneSolucion == 1){
         printf("Existen raices");
     }
     else{
         printf("No existen raices dentro de los numeros reales");
     }
- */
     
 }
 
