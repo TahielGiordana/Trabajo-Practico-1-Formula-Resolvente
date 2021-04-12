@@ -6,7 +6,6 @@ section .text
 global formulaResolvente
     
 formulaResolvente:
-    xor eax,eax
 
     push ebp
     mov ebp,esp
@@ -31,6 +30,14 @@ formulaResolvente:
     fld dword[ebp+12]    ; b,b,-4ac,1/(2a)
     fmulp st1            ; b^2,-4ac,1/(2a)
     faddp st1            ; b^2 - 4ac,1/(2a)
+
+    ;Revisar si existen soluciones
+
+    ftst                 ; Compara el primer valor del stack con 0
+    fstsw ax             ; Guarda el status en ax
+    sahf                 ; Guarda las flags en ah
+    jb noHayRaices       ; Si el resultado es negativo no se puede calcular la raiz 
+
     fsqrt                ; sqrt(b^2 - 4ac),1/(2a)
     fld dword[ebp+12]    ; b,sqrt(b^2 - 4ac),1/(2a)
     fchs                 ; -b,sqrt(b^2 - 4ac),1/(2a)
@@ -59,6 +66,10 @@ formulaResolvente:
     fsubp st1            ; -b - sqrt(b^2 - 4ac),1/(2a)
     fmulp st1            ; (-b - sqrt(b^2 - 4ac)) / 2a
     
+    jmp end
+
+noHayRaices:
+    mov eax,0
     jmp end
     
 end:
