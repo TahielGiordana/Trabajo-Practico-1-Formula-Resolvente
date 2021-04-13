@@ -15,11 +15,11 @@
       - [Capturas](#capturas)
    - [Ejercicios](#ejercicios)
       - [Gestión de Memoria](#gestión-de-memoria)
-         - Ejercicio 4
-         - Ejercicio 6
-         - Ejercicio 7
+         - [Ejercicio 4](#ejercicio-4)
+         - [Ejercicio 6](#ejercicio-6)
+         - [Ejercicio 7](#ejercicio-7)
       - [FPU](#fpu)
-         - Ejercicio 4
+         - [Ejercicio 4](#ejercicio-4)
   
    
 
