@@ -11,6 +11,7 @@
       - [Código C](#código-c)
       - [Código Assembler IA32](#código-assembler-ia32)
       - [Compilación](#compilación)
+      - [Ejecución](#ejecución)
       - [Capturas](#capturas)
    - [Ejercicios](#ejercicios)
       - [Gestión de Memoria](#gestión-de-memoria)
@@ -148,6 +149,33 @@ end:
 
 
 ### Compilación
+
+Partiendo de la carpeta raíz del proyecto, nos ubicamos en la carpeta **Codigo**.
+Para esto ejecutamos la siguiente línea en la terminal: 
+```
+ls Codigo
+```
+
+Luego compilamos el código assembler utilizando NASM indicando la arquitectura de 32 bits: 
+```
+nasm -f elf32 formulaResolvente.asm -o formulaResolvente.o
+```
+
+Continuamos compilando y linkeando el código C mediante gcc: 
+```
+gcc -m32 -o formulaResolvente formulaResolvente.o formulaResolvente.c
+```
+
+### Ejecución
+Una vez compilado, podemos ejecutar el programa mediante la siguiente instrucción en la terminal: 
+```
+./formulaResolvente
+```
+
+Además podremos utilizar DDD para depurar el código, observando su comportamiento y el uso de los registros: 
+```
+ddd formulaResolvente
+``` 
 
 ### Capturas
 
