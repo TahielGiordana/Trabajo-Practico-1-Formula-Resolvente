@@ -1,6 +1,61 @@
-# Trabajo-Practico-1-Formula-Resolvente
+# Trabajo Práctico 1: Formula Resolvente
+#### Organización del Computador 2
+#### UNGS 1er Semestre 2021
 
-Organización del Computador 2 - UNGS 2021
+##### Alumno: Giordana, Tahiel
+
+## Índice
+   - [Descripción](#descripción)
+   - [Requisitos](#requisitos)
+   - [Función Cuadrática](#función-cuadratica)
+      - Código C
+      - Código Assembler IA32
+      - Compilación
+      - Capturas
+   - [Ejercicios](#ejercicios)
+      - Gestión de Memoria
+         - Ejercicio 4
+         - Ejercicio 6
+         - Ejercicio 7
+      - FPU
+         - Ejercicio 4
+  
+   
+
+## Descripción
+
+El objetivo del trabajo es realizar un programa en assembler IA32 que calcule las raíces de una función cuadrática a través de la fórmula resolvente.
+Los coeficientes a, b y c son recibidos por parámetro, teniendo en cuenta que estos pueden tomar valores de punto flotante.
+La función es invocada desde un programa en C, el cual permite al usuario ingresar los valores de a, b y c. 
+Además, se debe compilar y linkear los archivos objeto de manera separada, obteniendo un ejecutable que muestra por consola las raíces obtenidas.
+Por último, se presenta la resolución de ejercicios relacionados a la gestión de memoria y al uso de la FPU.
+
+## Requisitos
+
+## Función Cuadrática
+
+### Código C
+
+### Código Assembler IA32
+
+### Compilación
+
+### Capturas
+
+## Ejercicios
+
+### Gestión de Memoria
+
+#### Ejercicio 4
+
+#### Ejercicio 6
+
+#### Ejercicio 7
+
+### FPU
+
+#### Ejercicio 4
+
 
 Dificultades:
 
