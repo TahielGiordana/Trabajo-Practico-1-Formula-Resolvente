@@ -38,7 +38,114 @@ Se requieren distintas herramientas para la compilación del código, para el c�
 
 ### Código C
 
+Comienzo importando las librerías y declarando la función.
+```c
+int formulaResolvente(float a, float b, float c);
+```
+Los valores de a, b y c son pasados como parámetros. La función retorna un 0 en caso de que no existan raíces posibles dentro del conjunto de los reales, y 1 en caso de que sí existan.
+
+Se declaran las variables a, b y c de la ecuación y solicitamos al usuario que ingrese el valor de cada una. Además utilizamos el `int hayRaices` que nos indicará si la ecuacion tiene soluciones posibles.
+```c
+float a;
+float b;
+float c;
+
+int hayRaices;
+
+printf("\nIntroduzca el valor de a: ");
+scanf("%f",&a);
+printf("\nIntroduzca el valor de a: ");
+scanf("%f",&b);
+printf("\nIntroduzca el valor de a: ");
+scanf("%f",&c);
+```
+
+Por último invocamos la función y mostramos por consola las raíces obtenidas.
+```c
+hayRaices = formulaResolvente(a,b,c);
+
+    if(hayRaices == 1){
+        printf("Existen raices");
+    }
+    else{
+        printf("No existen raices dentro de los numeros reales");
+    }
+```
+
 ### Código Assembler IA32
+
+Al invocar la función desde C los parámetros son almacenados en la pila. Para poder obtener estos valores contamos con el registro **EBP** que apunta a la base de la pila, y el registro **ESP** que apunta al tope de la misma.
+
+Comienzo declarando las variables. En este caso solo necesito almacenar el valor -4 en una variable que luego utilizo durante el desarrollo de la fórmula resolvente.
+```asm
+section .data
+   cuatroNeg dw -4
+```
+
+Luego declaro la función como global, de esta manera el linker vinculará la función con la llamada en C.
+```asm
+section .text
+
+global formulaResolvente
+```
+
+Para evitar incongruencias en la estructura de la pila comienzo realizando el **Enter 0,0**. 
+```asm
+formulaResolvente:
+    push ebp
+    mov ebp,esp
+```
+Procedo con el desarrollo de la fórmula, obteniendo la primer raíz en caso de ser posible. Como los valores pueden ser de punto flotante utilizo la **FPU** mediante su [set de instrucciones](http://linasm.sourceforge.net/docs/instructions/fpu.php).
+```asm
+;Obtengo la primer raiz
+
+   fld1                 ; 1
+   fld dword[ebp+8]     ; a,1
+   fscale               ; 2a,1
+   fdivp st1            ; 1/(2a)
+    
+   fild word[cuatroNeg] ; -4,1/(2a)
+   fld dword[ebp+8]     ; a,-4,1/(2a)
+   fmulp st1            ; (-4a),1/(2a)
+   fld dword[ebp+16]    ; c,(-4a),1/(2a)
+   fmulp st1            ; -4ac,1/(2a)
+   fld dword[ebp+12]    ; b,-4ac,1/(2a)
+   fld dword[ebp+12]    ; b,b,-4ac,1/(2a)
+   fmulp st1            ; b^2,-4ac,1/(2a)
+   faddp st1            ; b^2 - 4ac,1/(2a)
+
+   ;Revisar si existen soluciones
+
+   ftst                 ; Compara el primer valor del stack con 0
+   fstsw ax             ; Guarda el status en ax
+   sahf                 ; Guarda las flags en ah
+   jb noHayRaices       ; Si el resultado es negativo no se puede calcular la raiz 
+
+   fsqrt                ; sqrt(b^2 - 4ac),1/(2a)
+   fld dword[ebp+12]    ; b,sqrt(b^2 - 4ac),1/(2a)
+   fchs                 ; -b,sqrt(b^2 - 4ac),1/(2a)
+   faddp st1            ; -b + sqrt(b^2 - 4ac),1/(2a)
+   fmulp st1            ; (-b + sqrt(b^2 - 4ac)) / 2a
+```
+Luego el proceso para obtener la segunda raíz es similar, solo hay que restar el valor obtenido en la raíz cuadrada en vez de sumarlo.
+```asm
+   fsubp st1            ; -b - sqrt(b^2 - 4ac),1/(2a)
+   fmulp st1            ; (-b - sqrt(b^2 - 4ac)) / 2a
+```
+
+En caso de que no existan soluciones, salto a la etiqueta *noHayRaices*, la cual almacena el valor 0 en el registro eax.
+```asm
+noHayRaices:
+    mov eax,0
+    jmp end
+```
+Por último, una vez calculadas las raíces, se realiza un salto a la etiqueta *end* donde se produce el **Leave**.
+```asm
+end:
+   pop ebp
+   ret
+```
+
 
 ### Compilación
 
