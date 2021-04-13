@@ -7,17 +7,17 @@
 ## Índice
    - [Descripción](#descripción)
    - [Requisitos](#requisitos)
-   - [Función Cuadrática](#función-cuadratica)
-      - Código C
-      - Código Assembler IA32
-      - Compilación
-      - Capturas
+   - [Función Cuadrática](#función-cuadrática)
+      - [Código C](#código-c)
+      - [Código Assembler IA32](#código-assembler-ia32)
+      - [Compilación](#compilación)
+      - [Capturas](#capturas)
    - [Ejercicios](#ejercicios)
-      - Gestión de Memoria
+      - [Gestión de Memoria](#gestión-de-memoria)
          - Ejercicio 4
          - Ejercicio 6
          - Ejercicio 7
-      - FPU
+      - [FPU](#fpu)
          - Ejercicio 4
   
    
@@ -31,6 +31,8 @@ Además, se debe compilar y linkear los archivos objeto de manera separada, obte
 Por último, se presenta la resolución de ejercicios relacionados a la gestión de memoria y al uso de la FPU.
 
 ## Requisitos
+
+Se requieren distintas herramientas para la compilación del código, para el código assembler se utiliza [NASM](https://www.nasm.us) y para C se utiliza [gcc](https://gcc.gnu.org). Además se puede utilizar [DDD](https://www.gnu.org/software/ddd/) durante la depuración.
 
 ## Función Cuadrática
 
