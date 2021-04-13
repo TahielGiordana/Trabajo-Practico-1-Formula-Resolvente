@@ -193,6 +193,89 @@ ddd formulaResolvente
 
 #### FPU Ejercicio 4
 
+Se debe realizar una función en assembler IA-32 donde se defina un vector de números de punto flotante de precisión simple y calcule la suma. El prototipo de la función es:
+```c
+float suma_vf(float *vector, int cantidad);
+```
+Comienzo con el código C encargado de invocar la función. Declaro la función e inicializo un vector cuyos elementos son de tipo float, cuyo tamaño es arbitrario y se almacena en la variable *cantidad*. Además cuento con el puntero `float *vector` que apunta al primer elemento del vector. Por último invoco la función, mostrando por consola el resultado obtenido.
+```c
+#include <stdio.h>
+
+float sum_vf(float *vector, int cantidad);
+
+int main(){
+    float array[5] = {5.4, 3.3, 2.2, 4.7, 3.2};
+
+    int cantidad = sizeof(array)/sizeof(array[0]);
+
+    float *vector = &array[0];
+
+    printf("La suma de los numeros del vector es: %f\n",sum_vf(vector,cantidad));
+
+}
+```
+En cuanto al código assembler, comienzo declarando `global sum_vf` y realizando el **Enter 0,0**.
+```asm
+section .text
+
+global sum_vf
+
+sum_vf:
+
+    push ebp
+    mov ebp,esp
+```
+Luego desapilo las variables, almacenando la dirección del primer elemento del vector en eax y la cantidad de elementos en ebx.
+```asm
+mov eax,[ebp+8]
+mov ebx,[ebp+12]
+```
+Como deseo recorrer un vector, necesito un contador, en este caso utilizo el registro ecx.
+```asm
+mov ecx,0
+```
+Con el objetivo de evitar errores, compruebo que el vector no esté vacío. En caso de estarlo salto a la etiqueta *end*.
+```asm
+cmp ebx,0
+je end
+```
+Al trabajar con variables tipo float requerimos el uso de la FPU. Comenzamos cargando el valor del primer elemento en la pila de la fpu e incrementando ecx en 1.
+```asm
+fld dword[eax]
+inc eax
+jmp loop
+```
+Comenzamos el ciclo comprobando si el vector fue recorrido por completo. En caso que así sea, saltamos a la etiqueta *end* y el valor retornado se obtiene de la pila de la fpu.
+De no ser así, accedo al siguiente elemento del array. En este caso los elementos del vector son de tipo float, cuyo tamaño es de 4bytes, por lo que basta sumarle 4 a la dirección almacenada en eax. Procedo cargando en la pila el nuevo valor al que apunta eax, para luego obtener la suma de los valores almacenados en la pila e incrementar el contador en 1.
+```asm
+loop:
+    cmp ecx,ebx         ;Compruebo si ya se recorrio todo el vector
+    je end              ;Si ya se recorrio finalizo la funcion y retorno
+                        ;el resultado en el stack de la fpu
+    add eax,4           ;Accedo al siguiente elemento del array
+    fld dword[eax]      ;Cargo en el stack de la fpu el valor actual de eax
+    faddp st1           ;Sumo los dos valores almacenados.
+    inc ecx             ;Incremento el contador en 1
+
+    jmp loop
+```
+Para finalizar, realizo el **Leave**.
+```asm
+end:
+   pop ebp
+   ret
+```
+
+El programa puede ser compilado y ejecutado ingresando los siguientes comandos en la terminal:
+```
+ls EjercicioFPU
+nasm -f elf32 ejercicioFPU.asm -o ejercicioFPU.o
+gcc -m32 -o ejercicioFPU ejercicioFPU.o ejercicioFPU.c
+./ejercicioFPU
+```
+
+
+
 
 Dificultades:
 
