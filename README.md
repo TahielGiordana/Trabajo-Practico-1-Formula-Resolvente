@@ -15,11 +15,11 @@
       - [Capturas](#capturas)
    - [Ejercicios](#ejercicios)
       - [Gestión de Memoria](#gestión-de-memoria)
-         - [Ejercicio 4](#ejercicio-4)
-         - [Ejercicio 6](#ejercicio-6)
-         - [Ejercicio 7](#ejercicio-7)
+         - [Memoria Ejercicio 4](#memoria-ejercicio-4)
+         - [Memoria Ejercicio 6](#memoria-ejercicio-6)
+         - [Memoria Ejercicio 7](#memoria-ejercicio-7)
       - [FPU](#fpu)
-         - [Ejercicio 4](#ejercicio-4)
+         - [FPU Ejercicio 4](#fpu-ejercicio-4)
   
    
 
@@ -183,15 +183,15 @@ ddd formulaResolvente
 
 ### Gestión de Memoria
 
-#### Ejercicio 4
+#### Memoria Ejercicio 4
 
-#### Ejercicio 6
+#### Memoria Ejercicio 6
 
-#### Ejercicio 7
+#### Memoria Ejercicio 7
 
 ### FPU
 
-#### Ejercicio 4
+#### FPU Ejercicio 4
 
 
 Dificultades:
