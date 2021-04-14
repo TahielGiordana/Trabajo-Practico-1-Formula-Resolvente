@@ -185,9 +185,101 @@ ddd formulaResolvente
 
 #### Memoria Ejercicio 4
 
+**4. Usted dispone de un dispositivo que utiliza un sistema de paginación con direcciones 
+virtuales de 32 bits , 3 GB de memoria física y frames de 4 MB. ¿Cuántas entradas posee la 
+tabla de páginas en cada uno de estos esquemas?**
+
+**A. Si se utiliza un sistema de paginación de un solo nivel.**
+
+Sabemos que con 22 bits direccionamos 4MB, y que el tamaño de los frames es igual al de las 
+páginas. Por lo tanto si contamos con direcciones virtuales de 32 bits, entonces 10 bits son para el 
+número de páginas y 22 bits son para el offset. 
+Por lo tanto la tabla de páginas posee `2^10 = 1024` entradas.
+
+**B. Si se utiliza un sistema de tabla de paginación invertido.**
+
+La cantidad de entradas de la tabla de páginas se corresponde con el tamaño de la memoria 
+principal. Por lo tanto basta con dividir el tamaño de la memoria principal por el tamaño de las 
+páginas. Sabemos que con 30 bits direccionamos 1GB y con 31 bits direccionamos 2GB, además 
+sabemos que reservamos 22 bits para el offset.
+De esta manera obtenemos un total de `(231 + 230) / 222 = 29 + 28 = 768` entradas en la tabla de 
+páginas.
+
+**C. Presente una propuesta de un esquema de tablas multinivel de dos dos niveles.**
+
+Ya que contamos con 10 bits para el número de página, mi esquema de tablas multinivel de 2 
+niveles estaría compuesto por 2 tablas cuyas direcciones están compuestas por 5 bits. 
+El total de entradas de cada tabla es de `25 = 32`.
+
 #### Memoria Ejercicio 6
 
+**6. Se encuentran cargados los siguientes registros de segmento para el proceso P1:**
+   - CS -> base address: 10000, limit: 25000 
+   - DS -> base address: 5000, limit: 4000 
+   - SS -> base address: 50, limit: 3500 
+
+**Por otro lado, el proceso lee las siguientes direcciones lógicas:**
+   - A. La dirección 1 para el segmento de datos. 
+   - B. La dirección 520 para el segmento de código. 
+   - C. La dirección 350 para el segmento de stack.
+   - D. La dirección 4000 para el segmento de stack.
+   
+**Calcular la dirección física asociada a cada uno de estos.** 
+
+Respuesta: 
+   - A) 1 es menor a 4000. Entonces la dirección física es 5000 + 1 = 5001.
+   - B) 520 es menor a 25000. Entonces la dirección física es 10000 + 520 = 10520.
+   - C) 350 es menor a 3500. Entonces la dirección física es 50 + 350 = 400.
+   - D) 4000 es mayor a 3500. Entonces se produce una interrupción por dirección inválida.
+
 #### Memoria Ejercicio 7
+
+**7. Dado el siguiente esquema, indicar el estado final de la cache TLB y tabla de páginas.**
+
+**También indicar la cantidad de rafagas utilizadas en cada secuencia.**
+
+**Las páginas requeridas son las siguientes:**
+   * A. Pagina 0, Pagina 2, Pagina 0, Pagina 4, Pagina 5
+   * B. Pagina 2, Pagina 1, Pagina 0, Pagina 3, Pagina 4 
+
+**TLB**
+
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 0 | 3 | 0 |
+| 3 | 2 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 3 | V | 0 |
+| 1 | - | I |   |
+| 2 | - | I |   |
+| 3 | 2 | V | 1 | 
+| 4 | 0 | V | 2 | 
+| 5 | 1 | V | 3 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 3 | Página 0 |
+
+Backing Store
+| - | - | Página 1 | - | - | Página 2 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**Aclaraciones**
+   * Se tiene un esquema de paginación con 6 páginas , 4 frames, una TLB con dos entradas y un backing store ilimitado. 
+La columna tiempo indica el orden de llegada, donde el valor 0 es el más antiguo. 
+   * Para decidir qué página se reemplaza en cada momento se utiliza la política de reemplazo FIFO (first-in , first-out). 
+   * Siempre que se utiliza una entrada de la tabla de páginas, se actualiza la TLB 
+   * No se contabilizan los tiempos de escritura en este ejercicio. 
+   * Los tiempos de acceso son los siguientes:
+      * TLB -> 1 rafaga 
+      * Tabla de paginas -> 2 rafagas 
+      * Backing Store -> 10 rafagas.  
+
+
 
 ### FPU
 
