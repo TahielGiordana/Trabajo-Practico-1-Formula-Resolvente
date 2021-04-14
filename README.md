@@ -284,7 +284,9 @@ La columna tiempo indica el orden de llegada, donde el valor 0 es el más antigu
       * Tabla de paginas -> 2 rafagas 
       * Backing Store -> 10 rafagas.
 
-**A) Pagina 0, Pagina 2, Pagina 0, Pagina 4, Pagina 5**
+```
+A) Pagina 0, Pagina 2, Pagina 0, Pagina 4, Pagina 5
+```
 
 **A1- Busco la página 0.**
 
@@ -453,7 +455,176 @@ Estado final:
 
 **Tiempo Total de Ejecución: 1 + 13 + 13 + 3 + 3 = 33 ráfagas**
 
+```
+B) Pagina 2, Pagina 1, Pagina 0, Pagina 3, Pagina 4
+```
 
+**B1- Busco la página 2.**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 2 | 3 | 1 |
+| 3 | 2 | 0 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | - | I |   |
+| 1 | - | I |   |
+| 2 | 3 | V | 3 |
+| 3 | 2 | V | 0 | 
+| 4 | 0 | V | 1 | 
+| 5 | 1 | V | 2 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 3 | Página 2 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 0 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**B2- Busco la página 1.**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 2 | 3 | 0 |
+| 1 | 2 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | - | I |   |
+| 1 | 2 | V | 3 |
+| 2 | 3 | V | 2 |
+| 3 | - | I |   | 
+| 4 | 0 | V | 0 | 
+| 5 | 1 | V | 1 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 1 | Página 2 |
+
+**Backing Store**
+| - | - | Página 3 | - | - | Página 0 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**B3- Busco la página 0.**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 0 | 0 | 1 |
+| 1 | 2 | 0 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 0 | V | 3 |
+| 1 | 2 | V | 2 |
+| 2 | 3 | V | 1 |
+| 3 | - | I |   | 
+| 4 | - | I |   | 
+| 5 | 1 | V | 0 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 0 | Página 5 | Página 1 | Página 2 |
+
+**Backing Store**
+| - | - | Página 3 | - | - | Página 4 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**B4- Busco la página 3.**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 0 | 0 | 0 |
+| 3 | 1 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 0 | V | 2 |
+| 1 | 2 | V | 1 |
+| 2 | 3 | V | 0 |
+| 3 | 1 | V | 3 | 
+| 4 | - | I |   | 
+| 5 | - | I |   | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 0 | Página 3 | Página 1 | Página 2 |
+
+**Backing Store**
+| - | - | Página 5 | - | - | Página 4 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**B5- Busco la página 4.**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 4 | 3 | 1 |
+| 3 | 1 | 0 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 0 | V | 1 |
+| 1 | 2 | V | 0 |
+| 2 | - | I |   |
+| 3 | 1 | V | 2 | 
+| 4 | 3 | V | 3 | 
+| 5 | - | I |   | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 0 | Página 3 | Página 1 | Página 4 |
+
+**Backing Store**
+| - | - | Página 5 | - | - | Página 2 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**Tiempo Total de Ejecución: 13 + 13 + 13 + 13 + 13 = 65 ráfagas**
 
 ### FPU
 
