@@ -10,8 +10,10 @@ formulaResolvente:
     push ebp
     mov ebp,esp
 
-    ;(Por ahora con a,b,c = int)
-    ;a = [ebp+8], b=[ebp+12], c=[ebp+16]
+    ;a,b,c son tipo float, por lo tanto ocupan 4bytes (1 double word)
+
+    ;formulaResolvente() = [ebp+4], a = [ebp+8], b=[ebp+12], c=[ebp+16]
+    ;raiz1 = [ebp+20] , raiz2 = [ebp+24]
 
     ;FPU
     ;Obtengo la primer raiz
@@ -43,6 +45,8 @@ formulaResolvente:
     fchs                 ; -b,sqrt(b^2 - 4ac),1/(2a)
     faddp st1            ; -b + sqrt(b^2 - 4ac),1/(2a)
     fmulp st1            ; (-b + sqrt(b^2 - 4ac)) / 2a
+    mov ebx, [ebp+20]    ; Almaceno en ebx la direccion de la primer raiz
+    fstp dword[ebx]      ; Guardo el valor obtenido en raiz1
 
     ;Repito el proceso para la segunda raiz
     
@@ -61,14 +65,18 @@ formulaResolvente:
     fmulp st1            ; b^2,-4ac,1/(2a)
     faddp st1            ; b^2 - 4ac,1/(2a)
     fsqrt                ; sqrt(b^2 - 4ac),1/(2a)
-    fld dword[ebp+12]    ; b,sqrt(b^2 - 4ac),1/(2a)
-    fchs                 ; -b,sqrt(b^2 - 4ac),1/(2a)
-    fsubp st1            ; -b - sqrt(b^2 - 4ac),1/(2a)
+    fchs                 ; -sqrt(b^2 - 4ac),1/(2a)
+    fld dword[ebp+12]    ; b,-sqrt(b^2 - 4ac),1/(2a)
+    fchs                 ; -b,-sqrt(b^2 - 4ac),1/(2a)
+    faddp st1            ; -b - sqrt(b^2 - 4ac),1/(2a)
     fmulp st1            ; (-b - sqrt(b^2 - 4ac)) / 2a
+    mov ebx, [ebp+24]   ; Almaceno en ebx la direccion de la primer raiz
+    fstp dword[ebx]     ; Guardo el valor obtenido en raiz2
     
+    mov eax,1            ; Hay soluciones, retorna 1
     jmp end
 
-noHayRaices:
+noHayRaices:             ;En caso de que no hay soluciones retorna 0
     mov eax,0
     jmp end
     
