@@ -191,25 +191,30 @@ tabla de páginas en cada uno de estos esquemas?**
 
 **A. Si se utiliza un sistema de paginación de un solo nivel.**
 
+```
 Sabemos que con 22 bits direccionamos 4MB, y que el tamaño de los frames es igual al de las 
 páginas. Por lo tanto si contamos con direcciones virtuales de 32 bits, entonces 10 bits son para el 
 número de páginas y 22 bits son para el offset. 
-Por lo tanto la tabla de páginas posee `2^10 = 1024` entradas.
+Por lo tanto la tabla de páginas posee 2^10 = 1024 entradas.
+```
 
 **B. Si se utiliza un sistema de tabla de paginación invertido.**
 
+```
 La cantidad de entradas de la tabla de páginas se corresponde con el tamaño de la memoria 
 principal. Por lo tanto basta con dividir el tamaño de la memoria principal por el tamaño de las 
 páginas. Sabemos que con 30 bits direccionamos 1GB y con 31 bits direccionamos 2GB, además 
 sabemos que reservamos 22 bits para el offset.
-De esta manera obtenemos un total de `(231 + 230) / 222 = 29 + 28 = 768` entradas en la tabla de 
+De esta manera obtenemos un total de (231 + 230) / 222 = 29 + 28 = 768 entradas en la tabla de 
 páginas.
+```
 
 **C. Presente una propuesta de un esquema de tablas multinivel de dos dos niveles.**
-
+```
 Ya que contamos con 10 bits para el número de página, mi esquema de tablas multinivel de 2 
 niveles estaría compuesto por 2 tablas cuyas direcciones están compuestas por 5 bits. 
-El total de entradas de cada tabla es de `25 = 32`.
+El total de entradas de cada tabla es de 25 = 32.
+```
 
 #### Memoria Ejercicio 6
 
@@ -225,13 +230,13 @@ El total de entradas de cada tabla es de `25 = 32`.
    - D. La dirección 4000 para el segmento de stack.
    
 **Calcular la dirección física asociada a cada uno de estos.** 
-
+```
 Respuesta: 
    - A) 1 es menor a 4000. Entonces la dirección física es 5000 + 1 = 5001.
    - B) 520 es menor a 25000. Entonces la dirección física es 10000 + 520 = 10520.
    - C) 350 es menor a 3500. Entonces la dirección física es 50 + 350 = 400.
    - D) 4000 es mayor a 3500. Entonces se produce una interrupción por dirección inválida.
-
+```
 #### Memoria Ejercicio 7
 
 **7. Dado el siguiente esquema, indicar el estado final de la cache TLB y tabla de páginas.**
@@ -277,7 +282,176 @@ La columna tiempo indica el orden de llegada, donde el valor 0 es el más antigu
    * Los tiempos de acceso son los siguientes:
       * TLB -> 1 rafaga 
       * Tabla de paginas -> 2 rafagas 
-      * Backing Store -> 10 rafagas.  
+      * Backing Store -> 10 rafagas.
+
+**A) Pagina 0, Pagina 2, Pagina 0, Pagina 4, Pagina 5**
+
+**A1- Busco la página 0.**
+
+Está en la TLB.
+
+Tiempo de ejecución = 1 ráfaga.
+
+Estado Final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 0 | 3 | 0 |
+| 3 | 2 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 3 | V | 0 |
+| 1 | - | I |   |
+| 2 | - | I |   |
+| 3 | 2 | V | 1 | 
+| 4 | 0 | V | 2 | 
+| 5 | 1 | V | 3 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 3 | Página 0 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 2 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**A2- Busco la página 2**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 2 | 3 | 1 |
+| 3 | 2 | 0 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | - | I |   |
+| 1 | - | I |   |
+| 2 | 3 | V | 3 |
+| 3 | 2 | V | 0 | 
+| 4 | 0 | V | 1 | 
+| 5 | 1 | V | 2 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 3 | Página 2 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 0 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**A3- Busco la página 0**
+
+Está en el backing store.
+
+Tiempo de ejecución = 1 + 2 + 10 = 13 ráfagas.
+
+Estado final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 2 | 3 | 0 |
+| 0 | 2 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 2 | V | 3 |
+| 1 | - | I |   |
+| 2 | 3 | V | 2 |
+| 3 | - | I |   | 
+| 4 | 0 | V | 0 | 
+| 5 | 1 | V | 1 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 0 | Página 2 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 3 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**A4- Busco la página 4**
+
+Está en la memoria principal.
+
+Tiempo de ejecución = 1 + 2 = 3 ráfagas.
+
+Estado final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 4 | 0 | 1 |
+| 0 | 2 | 0 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 2 | V | 3 |
+| 1 | - | I |   |
+| 2 | 3 | V | 2 |
+| 3 | - | I |   | 
+| 4 | 0 | V | 0 | 
+| 5 | 1 | V | 1 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 0 | Página 2 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 3 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**A5- Busco la página 5**
+
+Está en la memoria principal.
+
+Tiempo de ejecución = 1 + 2 = 3 ráfagas.
+
+Estado final:
+
+**TLB**
+| Página | Frame | Tiempo |
+| ------ | ----- | ------ |
+| 4 | 0 | 0 |
+| 5 | 1 | 1 |
+
+**Tabla de Páginas**
+| Página | Frame | Valid | Tiempo |
+| ------ | ----- | ----- | ------ |
+| 0 | 2 | V | 3 |
+| 1 | - | I |   |
+| 2 | 3 | V | 2 |
+| 3 | - | I |   | 
+| 4 | 0 | V | 0 | 
+| 5 | 1 | V | 1 | 
+
+**Memoria Principal**
+| Frame 0 | Frame 1 | Frame 2 | Frame 3 |
+| ------- | ------- | ------- | ------- |
+| Página 4 | Página 5 | Página 0 | Página 2 |
+
+**Backing Store**
+| - | - | Página 1 | - | - | Página 3 | - | - |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+**Tiempo Total de Ejecución: 1 + 13 + 13 + 3 + 3 = 33 ráfagas**
 
 
 
