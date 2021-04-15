@@ -23,7 +23,7 @@ int main(){
 
     if(tieneSolucion == 1){
         if(raiz1 == raiz2){
-            printf("\nEl conjunto de raices es: {%f}\n",raiz1);
+            printf("\nLa funcion tiene una raiz doble en: {%f}\n",raiz1);
         }
         else{
             printf("\nEl conjunto de raices es: {%f, %f}\n",raiz1,raiz2);
