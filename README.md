@@ -206,7 +206,7 @@ ddd formulaResolvente
 
 ### Capturas
 Una función cuadrática puede tener dos raíces, una raíz doble o no tener raíces.
-Los resultados pueden verificarse mediante [GeoGebra](#https://www.geogebra.org/?lang=es).
+Los resultados pueden verificarse mediante [GeoGebra](https://www.geogebra.org/?lang=es).
 
 A continuación se muestran ejemplos de estos tres casos:
 
