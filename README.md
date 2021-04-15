@@ -21,8 +21,7 @@
       - [FPU](#fpu)
          - [FPU Ejercicio 4](#fpu-ejercicio-4)
   
-   
-
+  
 ## Descripción
 
 El objetivo del trabajo es realizar un programa en assembler IA32 que calcule las raíces de una función cuadrática a través de la fórmula resolvente.
@@ -41,17 +40,22 @@ Se requieren distintas herramientas para la compilación del código, para el c�
 
 Comienzo importando las librerías y declarando la función.
 ```c
-int formulaResolvente(float a, float b, float c);
+#include <stdio.h>
+int formulaResolvente(float a, float b, float c, float *raiz1, float *raiz2);
 ```
-Los valores de a, b y c son pasados como parámetros. La función retorna un 0 en caso de que no existan raíces posibles dentro del conjunto de los reales, y 1 en caso de que sí existan.
+Los valores de a, b y c son pasados como parámetros. Además recibe los punteros `*raiz1` y `*raiz2`, los cuales se encargan de almacenar el valor de las raíces posibles.
+La función retorna un 0 en caso de que no existan raíces posibles dentro del conjunto de los reales, y 1 en caso de que sí existan.
 
-Se declaran las variables a, b y c de la ecuación y solicitamos al usuario que ingrese el valor de cada una. Además utilizamos el `int hayRaices` que nos indicará si la ecuacion tiene soluciones posibles.
+Se declaran las variables a, b y c de la ecuación y solicitamos al usuario que ingrese el valor de cada una. Además utilizamos un `int tieneSolucion` que nos indicará si la ecuacion tiene soluciones posibles.
 ```c
 float a;
 float b;
 float c;
 
-int hayRaices;
+float raiz1;
+float raiz2;
+
+int tieneSolucion;
 
 printf("\nIntroduzca el valor de a: ");
 scanf("%f",&a);
@@ -61,12 +65,17 @@ printf("\nIntroduzca el valor de a: ");
 scanf("%f",&c);
 ```
 
-Por último invocamos la función y mostramos por consola las raíces obtenidas.
+Por último invocamos la función y mostramos por consola las raíces obtenidas. Se indica en caso de que el resultado sea una raíz doble.
 ```c
-hayRaices = formulaResolvente(a,b,c);
+tieneSolucion = formulaResolvente(a,b,c,&raiz1,&raiz2);
 
     if(hayRaices == 1){
-        printf("Existen raices");
+      if(raiz == raiz2){
+         printf("\nLa función tiene una raíz doble en: {%f}\n",raiz1);
+      }
+      else{
+         printf("\nEl conjunto de raíces es: {%f, %f}\n",raiz1,raiz2)
+      }
     }
     else{
         printf("No existen raices dentro de los numeros reales");
@@ -96,45 +105,61 @@ formulaResolvente:
     push ebp
     mov ebp,esp
 ```
-Procedo con el desarrollo de la fórmula, obteniendo la primer raíz en caso de ser posible. Como los valores pueden ser de punto flotante utilizo la **FPU** mediante su [set de instrucciones](http://linasm.sourceforge.net/docs/instructions/fpu.php).
-```asm
-;Obtengo la primer raiz
+Procedo con el desarrollo de la fórmula. Como los valores pueden ser de punto flotante utilizo la **FPU** mediante su [set de instrucciones](http://linasm.sourceforge.net/docs/instructions/fpu.php).
 
+Comienzo almacenando el valor de `2a` en la pila, con el objetivo de no repetir el código al calcular la segunda raíz.  
+```asm
    fld1                 ; 1
    fld dword[ebp+8]     ; a,1
    fscale               ; 2a,1
    fdivp st1            ; 1/(2a)
+   fstp dword[ebp-12]   ;Guardo 1/(2a) y vacio el stack
     
-   fild word[cuatroNeg] ; -4,1/(2a)
-   fld dword[ebp+8]     ; a,-4,1/(2a)
-   fmulp st1            ; (-4a),1/(2a)
-   fld dword[ebp+16]    ; c,(-4a),1/(2a)
-   fmulp st1            ; -4ac,1/(2a)
-   fld dword[ebp+12]    ; b,-4ac,1/(2a)
-   fld dword[ebp+12]    ; b,b,-4ac,1/(2a)
-   fmulp st1            ; b^2,-4ac,1/(2a)
-   faddp st1            ; b^2 - 4ac,1/(2a)
-
-   ;Revisar si existen soluciones
-
-   ftst                 ; Compara el primer valor del stack con 0
-   fstsw ax             ; Guarda el status en ax
-   sahf                 ; Guarda las flags en ah
-   jb noHayRaices       ; Si el resultado es negativo no se puede calcular la raiz 
-
-   fsqrt                ; sqrt(b^2 - 4ac),1/(2a)
-   fld dword[ebp+12]    ; b,sqrt(b^2 - 4ac),1/(2a)
-   fchs                 ; -b,sqrt(b^2 - 4ac),1/(2a)
-   faddp st1            ; -b + sqrt(b^2 - 4ac),1/(2a)
-   fmulp st1            ; (-b + sqrt(b^2 - 4ac)) / 2a
+   fild word[cuatroNeg] ; -4
+   fld dword[ebp+8]     ; a,-4
+   fmulp st1            ; (-4a)
+   fld dword[ebp+16]    ; c,(-4a)
+   fmulp st1            ; -4ac
+   fld dword[ebp+12]    ; b,-4ac
+   fld dword[ebp+12]    ; b,b,-4ac
+   fmulp st1            ; b^2,-4ac
+   faddp st1            ; b^2 - 4ac
 ```
-Luego el proceso para obtener la segunda raíz es similar, solo hay que restar el valor obtenido en la raíz cuadrada en vez de sumarlo.
+Verifico que `b^2-4ac >= 0`, para saber si existen soluciones. Si esta condición no se cumple se produce un salto a la etiqueta `noHayRaices`.
+
 ```asm
-   fsubp st1            ; -b - sqrt(b^2 - 4ac),1/(2a)
-   fmulp st1            ; (-b - sqrt(b^2 - 4ac)) / 2a
+   ftst                ; Compara el primer valor del stack con 0
+   fstsw ax            ; Guarda el status de la fpu en ax
+   sahf                ; Copia SF,ZF,AF,PF y CF desde AH hacia el registro de flags.
+   jb noHayRaices      ; Si el resultado es negativo no se puede calcular la raiz.
+```
+De existir raíces, se prosigue almacenando `sqrt(b^2-4ac)` y formando la fórmula resolvente.
+```asm
+   fsqrt               ; sqrt(b^2 - 4ac)
+   fst dword[ebp-8]    ; Guardo el resultado de la raiz cuadrada y vacio el stack
+    
+   fld dword[ebp+12]   ; b, sqrt(b^2 - 4ac)
+   fchs                ; -b, sqrt(b^2 - 4ac)
+   faddp st1           ; -b + sqrt(b^2 - 4ac)
+   fld dword[ebp-12]   ; 1/(2a), -b + sqrt(b^2 - 4ac)
+   fmulp st1           ; (-b + sqrt(b^2 - 4ac)) / 2a
+   mov ebx, [ebp+20]   ; Almaceno en ebx la direccion de la primer raiz
+   fstp dword[ebx]     ; Guardo el valor obtenido en raiz1 y vacio el stack
+```
+Luego el proceso para obtener la segunda raíz es similar, solo hay que cargar los valores obtenidos previamente en `2a` y `sqrt(b^2 - 4ac)` y realizar la resta en vez de la suma.
+```asm
+   fld dword[ebp-8]    ; sqrt(b^2 - 4ac)
+    fchs                ; -sqrt(b^2 - 4ac)
+    fld dword[ebp+12]   ; b, -sqrt(b^2 - 4ac)
+    fchs                ; -b, -sqrt(b^2 - 4ac)
+    faddp st1           ; -b - sqrt(b^2 - 4ac)
+    fld dword[ebp-12]   ; 1/(2a), -b - sqrt(b^2 - 4ac)
+    fmulp st1           ; (-b - sqrt(b^2 - 4ac)) / 2a
+    mov ebx, [ebp+24]   ; Almaceno en ebx la direccion de la segunda raiz
+    fstp dword[ebx]     ; Guardo el valor obtenido en raiz2 y vacio el stack
 ```
 
-En caso de que no existan soluciones, salto a la etiqueta *noHayRaices*, la cual almacena el valor 0 en el registro eax.
+En caso de que no existan soluciones se almacena el valor 0 en el registro eax.
 ```asm
 noHayRaices:
     mov eax,0
@@ -146,7 +171,6 @@ end:
    pop ebp
    ret
 ```
-
 
 ### Compilación
 
@@ -710,49 +734,3 @@ nasm -f elf32 ejercicioFPU.asm -o ejercicioFPU.o
 gcc -m32 -o ejercicioFPU ejercicioFPU.o ejercicioFPU.c
 ./ejercicioFPU
 ```
-
-
-
-
-Dificultades:
-
-    *Pasar los parametros desde C :
-
-        La funcion formulaResolvente envia los valores de a, b y c.
-        Estos valores se almacenan en la pila.
-
-        Solucion:
-
-        Para desapilar las variables primero copio la direccion del esp al ebp.
-        De esta manera obtengo que a = [ebp+8], b = [ebp+12] y c = [ebp+16]. 
-    
-    *Trabajar con puntos flotantes:
-
-        Intente trabajar con variables tipo double pero no podia almacenar el valor
-        en los registros.
-
-        Solucion:
-
-        El tipo double ocupa 8 bytes, por eso no era posible almacenar el valor en los
-        registros. Ahora las variables son de tipo float, los cuales ocupan 4 bytes al
-        igual que los registros.
-
-    *Verificar si existen soluciones:
-
-        Si realizo fsqrt sobre un valor negativo obtengo *.
-
-        Solucion: 
-        
-        Verificar si b^2 - 4ac >= 0 antes de realizar fsqrt.
-        Si se cumple la condicion prosigo con las instrucciones,
-        en caso contrario retorno 0 ya que no existen raices
-        de esa funcion.
-
-
-    *Devolver las soluciones
-
-        Devolver las soluciones a la funcion. Si fuese un solo valor
-        lo almacenaria en el registro eax para retornarlo, pero al
-        tener dos soluciones no puedo.
-
-        Solucion:
