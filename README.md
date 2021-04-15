@@ -25,6 +25,9 @@
 ## Descripción
 
 El objetivo del trabajo es realizar un programa en assembler IA32 que calcule las raíces de una función cuadrática a través de la fórmula resolvente.
+
+![formulaResolvente](images/formulaResolvente.png)
+
 Los coeficientes a, b y c son recibidos por parámetro, teniendo en cuenta que estos pueden tomar valores de punto flotante.
 La función es invocada desde un programa en C, el cual permite al usuario ingresar los valores de a, b y c. 
 Además, se debe compilar y linkear los archivos objeto de manera separada, obteniendo un ejecutable que muestra por consola las raíces obtenidas.
@@ -202,6 +205,30 @@ ddd formulaResolvente
 ``` 
 
 ### Capturas
+Una función cuadrática puede tener dos raíces, una raíz doble o no tener raíces.
+Los resultados pueden verificarse mediante [GeoGebra](#https://www.geogebra.org/?lang=es).
+
+A continuación se muestran ejemplos de estos tres casos:
+
+Función con dos raíces: `3X^2 - 11X - 4`
+
+![ejemplo0](images/ejemplo0.png)
+
+![geogebra0](images/geogebra0.png)
+
+Función con una raíz doble:  `X^2 - 8X + 16`
+
+![ejemplo1](images/ejemplo1.png)
+
+![geogebra1](images/geogebra1.png)
+
+Función sin raíces:
+
+![ejemplo2](images/ejemplo2.png)
+
+![geogebra2](images/geogebra2.png)
+
+
 
 ## Ejercicios
 
