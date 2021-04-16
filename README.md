@@ -201,6 +201,16 @@ Continuamos compilando y linkeando el código C mediante gcc:
 gcc -m32 -o formulaResolvente formulaResolvente.o formulaResolvente.c
 ```
 
+O si se prefiere se cuenta con `funcionResolvente.sh`, el cual realiza estos comandos de manera automatica.
+Antes debemos otorgarle permisos de ejecucion al archivo, esto se realiza mediante el comando chmod en la terminal:
+```
+sudo chmod 775 funcionResolvente.sh
+```
+Luego se podra ejecutar el script:
+```
+./funcionResolvente.sh
+```
+
 ### Ejecución
 Una vez compilado, podemos ejecutar el programa mediante la siguiente instrucción en la terminal: 
 ```
