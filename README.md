@@ -109,6 +109,7 @@ formulaResolvente:
     mov ebp,esp
 ```
 El estado de la pila sería el siguiente:
+
 ![pila](images/stack0.png)
 
 Procedo con el desarrollo de la fórmula. Como los valores pueden ser de punto flotante utilizo la **FPU** mediante su [set de instrucciones](http://linasm.sourceforge.net/docs/instructions/fpu.php).
@@ -153,6 +154,7 @@ De existir raíces, se prosigue almacenando `sqrt(b^2-4ac)` y formando la fórmu
    fstp dword[ebx]     ; Guardo el valor obtenido en raiz1 y vacio el stack
 ```
 Teniendo en cuenta las dos variables almacenadas, el estado de la pila sería el siguiente:
+
 ![pila](images/stack1.png)
 
 Luego el proceso para obtener la segunda raíz es similar, solo hay que cargar los valores obtenidos previamente en `2a` y `sqrt(b^2 - 4ac)` y realizar la resta en vez de la suma.
