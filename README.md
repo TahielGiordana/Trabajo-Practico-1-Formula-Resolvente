@@ -108,6 +108,9 @@ formulaResolvente:
     push ebp
     mov ebp,esp
 ```
+El estado de la pila sería el siguiente:
+![pila](#images/stack0.png)
+
 Procedo con el desarrollo de la fórmula. Como los valores pueden ser de punto flotante utilizo la **FPU** mediante su [set de instrucciones](http://linasm.sourceforge.net/docs/instructions/fpu.php).
 
 Comienzo almacenando el valor de `2a` en la pila, con el objetivo de no repetir el código al calcular la segunda raíz.  
@@ -149,6 +152,9 @@ De existir raíces, se prosigue almacenando `sqrt(b^2-4ac)` y formando la fórmu
    mov ebx, [ebp+20]   ; Almaceno en ebx la direccion de la primer raiz
    fstp dword[ebx]     ; Guardo el valor obtenido en raiz1 y vacio el stack
 ```
+Teniendo en cuenta las dos variables almacenadas, el estado de la pila sería el siguiente:
+![stack](#images/stack1.png)
+
 Luego el proceso para obtener la segunda raíz es similar, solo hay que cargar los valores obtenidos previamente en `2a` y `sqrt(b^2 - 4ac)` y realizar la resta en vez de la suma.
 ```asm
    fld dword[ebp-8]    ; sqrt(b^2 - 4ac)
@@ -256,7 +262,7 @@ La cantidad de entradas de la tabla de páginas se corresponde con el tamaño de
 principal. Por lo tanto basta con dividir el tamaño de la memoria principal por el tamaño de las 
 páginas. Sabemos que con 30 bits direccionamos 1GB y con 31 bits direccionamos 2GB, además 
 sabemos que reservamos 22 bits para el offset.
-De esta manera obtenemos un total de (231 + 230) / 222 = 29 + 28 = 768 entradas en la tabla de 
+De esta manera obtenemos un total de (2^31 + 2^30) / 2^22 = 2^9 + 2^8 = 768 entradas en la tabla de 
 páginas.
 ```
 
@@ -264,7 +270,7 @@ páginas.
 ```
 Ya que contamos con 10 bits para el número de página, mi esquema de tablas multinivel de 2 
 niveles estaría compuesto por 2 tablas cuyas direcciones están compuestas por 5 bits. 
-El total de entradas de cada tabla es de 25 = 32.
+El total de entradas de cada tabla es de 2^5 = 32.
 ```
 
 #### Memoria Ejercicio 6
